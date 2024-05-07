@@ -1,7 +1,11 @@
 # Aspirator3000
+
 Aspirator 3000: Robotic Vacuum Cleaner
 
-# Steps to clone the repository:
+## Steps to clone the repository
+
+### For ROS beginners
+
   <p> 1- Install ROS by this tutorial: https://www.youtube.com/watch?v=TnE7-tJOJjo&t=11s </p>
   
   <p> 2- Create and setup Catkin Workspace (https://www.youtube.com/watch?v=8uxd9RBQvmQ): </br>
