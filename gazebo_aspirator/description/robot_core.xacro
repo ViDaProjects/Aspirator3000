@@ -110,7 +110,7 @@
     <joint name="caster_wheel_joint" type="fixed">
         <parent link="chassis"/>
         <child link="caster_wheel"/>
-        <origin xyz="0.185 0 -0.025"/>
+        <origin xyz="0.185 0 -0.010"/>
     </joint>
 
 
