@@ -52,6 +52,10 @@
             <origin xyz="0.11 0 0.015" rpy="0 0 0"/>
         </xacro:inertial_box>
     </link>
+
+    <gazebo reference="chassis">
+        <material>Gazebo/White</material>
+    </gazebo>
     
     <!-- LEFT WHEEL LINK -->
 
@@ -78,6 +82,20 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_cylinder>
     </link>
+    <gazebo reference="left_wheel">
+        <material>Gazebo/Blue</material>
+    </gazebo>
+
+    <transmission name="left_wheel_transmission">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name = "left_wheel_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="left_wheel_actuator">
+            <mechanicalReduction>7</mechanicalReduction>
+            <hardwareInterface>VelocityJointInterface</hardwareInterface>
+        </actuator>
+    </transmission>
 
     <!-- RIGHT WHEEL LINK -->
 
@@ -105,6 +123,22 @@
         </xacro:inertial_cylinder>
     </link>
 
+    <gazebo reference="right_wheel">
+        <material>Gazebo/Blue</material>
+    </gazebo>
+
+    <transmission name="right_wheel_transmission">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name = "right_wheel_joint">
+            <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="right_wheel_actuator">
+            <mechanicalReduction>7</mechanicalReduction>
+            <hardwareInterface>VelocityJointInterface</hardwareInterface>
+        </actuator>
+    </transmission>
+
+
     <!-- CASTER WHEEL LINK -->
 
     <joint name="caster_wheel_joint" type="fixed">
@@ -131,5 +165,15 @@
         </xacro:inertial_sphere>
     </link>
     
+    <gazebo reference="caster_wheel">
+        <material>Gazebo/Black</material>
+        <mu1 value="0.001"/>
+        <mu2 value="0.001"/>
+    </gazebo>
     
+    <gazebo>
+        <plugin name = "gazebo_ros_control" filename="libgazebo_ros_control.so">
+        </plugin>
+    </gazebo>
+
 </robot>
