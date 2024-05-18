@@ -21,12 +21,17 @@
   <!-- Run a python script to the send a service call to gazebo_ros to spawn 
                 a URDF robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-          respawn="false" output="screen" args="-urdf -model p3dx -param robot_description" />
+          respawn="false" output="screen" args="-urdf -model aspirator -param robot_description" />
 
   <rosparam file="$(find gazebo_aspirator)/description/diff_drive.yaml" command="load" />
 
   <node name="aspirator_controller" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="mobile_base_controller" />
 
+  <node pkg="tf" type="static_transform_publisher" name="map_odom_broadcaster" args="0 0 0 0 0 0 /map /mobile_base/odom 100" />
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+    <remap from="/joint_states" to="/joint_states" />
+  </node>
   
 
 </launch>
