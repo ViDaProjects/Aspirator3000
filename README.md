@@ -21,4 +21,4 @@ Launching the simulation (currently on an empty map).
 roslaunch gazebo_aspirator aspirator_sim.launch
 ```
 
-![Gazebo model](https://github.com/ViDaProjects/aspirator3000/tree/main/images/simulation.png?raw=true)
+![Gazebo model](https://github.com/ViDaProjects/aspirator3000/blob/main/images/simulation.png?raw=true)
