@@ -1,28 +1,24 @@
 # Aspirator3000
 
-Aspirator 3000: Robotic Vacuum Cleaner
+Aspirator 3000 is a cleaning robot much like the ones you find at home, this one, however, comes with a bit of a twist, it can guarantee a quick and simple cleaning session through the use of a complex navigation system. With a LIDAR as well as encoder motors it maps the environment it will clean and proceeds to sweep the area in an efficient manner.
 
-## Steps to clone the repository
+## Installation
 
-### For ROS beginners
+```sh
+cd ~/catkin_ws/src
+git clone https://github.com/ViDaProjects/aspirator3000.git
 
-  <p> 1- Install ROS by this tutorial: https://www.youtube.com/watch?v=TnE7-tJOJjo&t=11s </p>
-  
-  <p> 2- Create and setup Catkin Workspace (https://www.youtube.com/watch?v=8uxd9RBQvmQ): </br>
-      ~$ mkdir catkin_ws </br>
-      ~$ cd catkin_ws/ </br>
-      ~/catkin_ws$ mkdir src </br>
-      ~/catkin_ws$ catkin_make </br>
-      ~/catkin_ws$ cd .. </br>
-      ~$ source ~/catkin_ws/devel/setup.bash </br>
-      ~$ gedit ~/.bashrc  </br>
-       Obs: Insert at the end of the file .bashrc: source ~/catkin_ws/devel/setup.bash </p>
-  
-  <p> 3- Cloning the repository: </br>
-      ~$ cd catkin_ws/src/ </br>
-      ~/catkin_ws/src$ git clone https://github.com/ViDaProjects/aspirator3000.git </br>
-      ~/catkin_ws/src$ cd .. </br>
-      ~/catkin_ws$ catkin_make </p>
-      
-      
-      
+cd ~/catkin_ws
+catkin_make
+source devel/setup.bash
+```
+
+## Running
+
+Launching the simulation (currently on an empty map).
+
+```sh
+roslaunch gazebo_aspirator aspirator_sim.launch
+```
+
+![Gazebo model](https://github.com/ViDaProjects/aspirator3000/tree/main/images/simulation.png?raw=true)
