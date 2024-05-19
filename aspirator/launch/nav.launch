@@ -1,0 +1,36 @@
+<launch>
+    <master auto="start"/>
+    <!-- NODE THAT TAKES IN CMD_VEL AND PUBLISHES ODOM AND WHAT NOT -->
+
+    <!-- TRANSFORMS -->
+    <node pkg="tf" type="static_transform_publisher" name="aspirator_laser" args="0.1 0 0.08 0 pi pi base_link lidar_link 100" />
+
+    <!-- NAVIGATION -->
+    <node pkg="gmapping" type="slam_gmapping" respawn="false" name="slam_gmapping" output="screen">
+        <param name="map_update_interval" value="5.0"/>
+        <param name="maxUrange" value="10.0"/>
+        <param name="iterations" value="1"/>
+        <param name="linearUpdate" value="0.25"/>
+        <param name="angularUpdate" value="0.262"/>
+        <param name="temporalUpdate" value="-1.0"/>
+        <param name="particles" value="300"/>
+        <param name="xmin" value="-20.0"/>
+        <param name="ymin" value="-20.0"/>
+        <param name="xmax" value="20.0"/>
+        <param name="ymax" value="20.0"/>
+        <param name="base_frame" value="base_link"/>
+    </node>
+
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    
+        <rosparam file="$(find aspirator_nav)/costmap_common_param.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find aspirator_nav)/costmap_common_param.yaml" command="load" ns="local_costmap" />
+
+        <rosparam file="$(find aspirator_nav)/local_costmap_param.yaml" command="load" />
+        <rosparam file="$(find aspirator_nav)/global_costmap_param.yaml" command="load" />
+        <rosparam file="$(find aspirator_nav)/base_local_planner_param.yaml" command="load" />
+        
+        <param name="base_global_planner" type="string" value=" navfn/NavfnROS" />
+        <param name="controller_frequency" type="double" value="6.0" />
+    </node>
+</launch>

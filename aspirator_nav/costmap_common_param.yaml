@@ -1,0 +1,33 @@
+robot_base_frame: base_link
+transform_tolerance: 1.0
+robot_radius: 0.155
+footprint: 
+  - [0.3302, -0.0508]
+  - [0.254, -0.0508]
+  - [0.254, -0.254]
+  - [-0.254, -0.254]
+  - [-0.254, 0.254]
+  - [0.254, 0.254]
+  - [0.254, 0.0508]
+  - [0.3302, 0.0508]
+
+inflater:
+  robot_radius: 0.155
+  inflation_radius: 0.155
+
+obstacles:
+  observation_sources: laser_scan_sensor
+  laser_scan_sensor: 
+    sensor_frame: camera_link
+    data_type: LaserScan
+    topic: mobile_base/scan
+    marking: true
+    clearing: true
+  min_obstacle_height: 0.01
+  max_obstacle_height: 2.0
+  marking: true
+  clearing: true
+
+z_voxels: 8
+z_resolution: 0.25
+max_obstacle_height: 2.0
