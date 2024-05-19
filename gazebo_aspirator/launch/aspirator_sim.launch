@@ -1,5 +1,6 @@
 <launch>
 
+  <!-- Arguments -->
   <arg name="paused" default="false" />
   <arg name="use_sim_time" default="true" />
   <arg name="gui" default="true" />
@@ -7,31 +8,39 @@
   <arg name="debug" default="false" />
   <arg name="world" default="aspirator" />
 
+  <!-- Include Gazebo world launch file -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-		<arg name="world_name" value="$(find p3dx_gazebo)/worlds/$(arg world).world" />
-		<arg name="debug" value="$(arg debug)" />
-		<arg name="gui" value="$(arg gui)" />
-		<arg name="paused" value="$(arg paused)" />
-		<arg name="use_sim_time" value="$(arg use_sim_time)" />
-		<arg name="headless" value="$(arg headless)" />
+    <arg name="world_name" value="$(find p3dx_gazebo)/worlds/$(arg world).world" />
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="$(arg paused)" />
+    <arg name="use_sim_time" value="$(arg use_sim_time)" />
+    <arg name="headless" value="$(arg headless)" />
   </include>
 
+  <!-- Load robot description parameter -->
   <param name="robot_description" command="$(find xacro)/xacro $(find gazebo_aspirator)/description/robot.urdf.xacro" />
-  
-  <!-- Run a python script to the send a service call to gazebo_ros to spawn 
-                a URDF robot -->
-  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-          respawn="false" output="screen" args="-urdf -model aspirator -param robot_description" />
 
+  <!-- Spawn the robot in Gazebo -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
+        respawn="false" output="screen" args="-urdf -model aspirator -param robot_description" />
+
+  <!-- Load controller parameters -->
   <rosparam file="$(find gazebo_aspirator)/description/diff_drive.yaml" command="load" />
 
-  <node name="aspirator_controller" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="mobile_base_controller" />
+  <!-- Start the controller spawner -->
+  <node name="aspirator_controller" pkg="controller_manager" type="spawner" 
+        respawn="false" output="screen" args="mobile_base_controller" />
 
-  <node pkg="tf" type="static_transform_publisher" name="map_odom_broadcaster" args="0 0 0 0 0 0 /map /mobile_base/odom 100" />
+  <!-- Static transform publisher -->
+  <node pkg="tf" type="static_transform_publisher" name="map_odom_broadcaster" 
+        args="0 0 0 0 0 0 /map /mobile_base/odom 100" />
 
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+  <!-- Robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" 
+        respawn="false" output="screen">
+    <param name="publish_frequency" type="double" value="50.0"/>
     <remap from="/joint_states" to="/joint_states" />
   </node>
-  
 
 </launch>
