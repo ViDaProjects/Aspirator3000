@@ -176,20 +176,20 @@
 
     <link name="lidar_link">
         <visual>
-            <origin xyz="0.1 0 0.15" rpy="0 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
                 <cylinder radius="0.05" length="0.04"/>
             </geometry>
             <material name="black"/>
         </visual>
         <collision>
-            <origin xyz="0.1 0 0.15" rpy="0 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
                 <cylinder radius="0.05" length="0.04"/>
             </geometry>
         </collision>
         <inertial>
-            <origin xyz="0.1 0 0.15" rpy="0 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
             <mass value="0.3"/>
             <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
         </inertial>
