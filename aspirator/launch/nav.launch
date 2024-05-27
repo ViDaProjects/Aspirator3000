@@ -10,7 +10,7 @@
         <remap from="/scan" to="/mobile_base/scan"/>
         <param name="map_update_interval" value="1.0"/>
         <param name="maxUrange" value="10.0"/>
-        <param name="iterations" value="1"/>
+        <param name="iterations" value="5"/><!--Quanto maior mais alinhado fica o mapa mas ele pesa mais-->
         <param name="linearUpdate" value="0.25"/>
         <param name="angularUpdate" value="0.262"/>
         <param name="temporalUpdate" value="-1.0"/>
@@ -24,8 +24,9 @@
         <param name="map_frame" value="map"/>
     </node>
 
-    <!--<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-    
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <remap from="/cmd_vel" to="/mobile_base_controller/cmd_vel"/>
+        
         <rosparam file="$(find aspirator_nav)/costmap_common_param.yaml" command="load" ns="global_costmap" />
         <rosparam file="$(find aspirator_nav)/costmap_common_param.yaml" command="load" ns="local_costmap" />
 
@@ -35,5 +36,5 @@
         
         <param name="base_global_planner" type="string" value=" navfn/NavfnROS" />
         <param name="controller_frequency" type="double" value="6.0" />
-    </node>-->
+    </node>
 </launch>
