@@ -4,10 +4,10 @@ global_costmap:
   update_frequency: 1.0
   publish_frequency: 1.0 #0
   static_map: false
-  width: 20 #3.4
-  height: 20 #3.4
-  origin_x: 0 #-1.20 is the actual position; -0.95 is the old one, for the frond wheel at the marker
-  origin_y: 0 #-1.91
+  width: 10 #3.4
+  height: 10 #3.4
+  origin_x: -5 #-1.20 is the actual position; -0.95 is the old one, for the frond wheel at the marker
+  origin_y: -5 #-1.91
   resolution: 0.05
 
   plugins:
