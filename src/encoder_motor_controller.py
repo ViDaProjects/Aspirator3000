@@ -51,11 +51,16 @@ class EncoderMotorController:
 
     #def get_angular_vel(self):
 
-    #def calculate_linear_vel(self):
+    def calculate_linear_vel(self):
+        self.linear_vel_current = self.angular_vel_current * self.wheel_radius
 
-    #def get_linear_vel(self):
+    def get_linear_vel(self):
+        return self.linear_vel_current
 
-    #def set_output_by_vel_rad(self):
+    def set_pwm_output(self, angular_vel: int, direction: int):
+        self.motor_speed_ratio = angular_vel/self.max_angular_vel
+        self.motor_direction = direction
+        self.motor.set_output(self.motor_speed_ratio * self.motor_direction)
 
     #def define_max_vel(self):
 
@@ -80,7 +85,10 @@ class EncoderMotorController:
     def set_anticlockwise_dir(self):
         self.motor_direction = -1
 
-    #def set_pwm_output(self): ?
-
     def delete_motor(self): 
         del motor
+
+
+    #PID calculus    
+
+    #Ver o CMD vel -> como que vou receber e lidar com esses dados?
