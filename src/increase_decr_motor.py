@@ -1,18 +1,11 @@
 # Importing modules and classes
 import time
 import numpy as np
-from gpiozero import Button
-from subprocess import check_call
 from gpiozero_extended import Motor
 
 T = 2  # Period of sine wave (s)
 tstop = False  # Sine wave duration (s)
 tsample = 1.5  # Sampling period for code execution (s)
-
-#Motor controls
-speed_btn = Button(6) #marrom
-direction_btn = Button(22) #vermelho
-reboot_btn = Button(26, hold_time=2) #branco
 
 speed = 0
 direction = 1 
@@ -24,7 +17,7 @@ decrease = False
 # Integrated encoder is on GPIO pins 25 and 25
 # GPIO pins 24 (Phase A - C1 at encoder) and 25 (Phase B - C2 at encoder)
 mymotor = Motor(
-    enable1=16, pwm1=17, pwm2=27,
+    enable1=22, pwm1=17, pwm2=27,
     encoder1=24, encoder2=25, encoderppr=860.67)
 mymotor.reset_angle()
 
@@ -75,9 +68,6 @@ def stop_motor():
     #stop = True
     brake_st = True
 
-def reboot_rasp():
-    check_call(['sudo', 'reboot'])
-
 # Pre-allocating output arrays
 t = []
 theta = []
@@ -95,13 +85,6 @@ rm = 0.037 #wheels radius
 # Running motor sine wave output
 print('Running code for', tstop, 'seconds ...')
 while not tstop:
-    #Buttons calls
-    if reboot_btn.is_active: #branco
-        stop_motor()
-    if speed_btn.is_active: #marrom
-        control_speed()
-    if direction_btn.is_active: #vermelho
-        control_direction()
 
     # Pausing for `tsample` to give CPU time to process encoder signal
     time.sleep(tsample)
@@ -115,7 +98,7 @@ while not tstop:
     print("PWM = ", mymotor.value)
     print("Angle = ", thetacurr, " deg")
     print("Speed - rad/s =", wcurr)
-    #print("Speed - m/s =", wcurr_m)
+    print("Speed - m/s =", wcurr_m)
     print(" ")
 
     # Updating output arrays

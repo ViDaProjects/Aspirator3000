@@ -1,0 +1,33 @@
+# Creating motor object using GPIO pins 16, 17, and 18
+# (using SN754410 quadruple half-H driver chip)
+# Integrated encoder is on GPIO pins 25 and 25
+# GPIO pins 24 (encoder2) (Phase A - C1 at encoder) and 25 (encoder1)(Phase B - C2 at encoder)
+mymotor = Motor(
+    enable1=16, pwm1=17, pwm2=27,
+    encoder1=25, encoder2=24, encoderppr=860.67)
+mymotor.reset_angle()
+
+
+
+- ARRUMAR PARA FICAR CERTO COM BRANCO - VERMELHO 
+
+
+#vermelho (GND) - branco (VCC) - Motor
+#enable 22
+#azul (17)(pwm1)(esquerda) - roxo (27)(pwm2)(direita)
+#encoder1 = c2 e encoder2 = c1 
+#c1 - amarelo (24)
+#c2 - verde (25)
+#pwm +
+#sentido horário -ang positivo 
+#pwm - 
+#sentido anti horario - ang neg
+
+
+
+outro motor
+enable - 23
+c1 - 16 (encoder2)
+c2 - 26 (encoder1)
+pwm1- gnd - marrom - 5
+pwm2 - vcc - branco - 6

@@ -2,13 +2,13 @@
 import time
 import numpy as np
 from gpiozero_extended import Motor
-from encoder_motor_controller import EncoderMotorController 
+#from encoder_motor_controller import EncoderMotorController 
 
 # Assigning parameter values
 tstop = False  # Sine wave duration (s)
 tsample = 0.01  # Sampling period for code execution (s)
 
-speed = 0
+speed = 1
 direction = 1 
 brake_st = False
 decrease = False
@@ -18,8 +18,8 @@ decrease = False
 # Integrated encoder is on GPIO pins 25 and 25
 # GPIO pins 24 (Phase A - C1 at encoder) and 25 (Phase B - C2 at encoder)
 mymotor = Motor(
-    enable1=16, pwm1=17, pwm2=27,
-    encoder1=24, encoder2=25, encoderppr=860.67)
+    enable1=23, pwm1=5, pwm2=6,
+    encoder1=26, encoder2=16, encoderppr=860.67)
 mymotor.reset_angle()
 
 # Pre-allocating output arrays
@@ -67,3 +67,33 @@ print('Done.')
 mymotor.set_output(0, brake=True)
 del mymotor
 
+#branco - vermelho 
+#roxo - azul
+#pwm +
+#sentido horário -ang negativo 
+#pwm - 
+#sentido anti - ang positivo
+
+#branco - vermelho 
+#azul - roxo
+#pwm +
+#sentido anti horário -ang positivo
+#pwm -
+#sentido horario - ang negativo
+
+#Certo: vermelho - branco 
+
+#vermelho - branco
+#roxo - azul
+#pwm +
+#sentido anti horário -ang positivo 
+#pwm - 
+#sentido horario - ang neg
+#INVERTI OS ENCODERS 24 E 25
+
+#vermelho - branco
+#roxo - azul
+#pwm +
+#sentido horário -ang neg 
+#pwm - 
+#sentido anti horario - ang pos
