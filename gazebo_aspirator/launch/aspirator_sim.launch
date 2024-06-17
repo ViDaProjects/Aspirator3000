@@ -33,8 +33,6 @@
         respawn="false" output="screen" args="mobile_base_controller" />
 
   <!-- Static transform publisher -->
-  <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom" />
-  <node pkg="tf2_ros" type="static_transform_publisher" name="odom_to_base_link" args="0 0 0 0 0 0 mobile_base_controller base_link" />
   
 
   <!-- Robot state publisher -->

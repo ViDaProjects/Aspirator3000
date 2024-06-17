@@ -3,6 +3,9 @@
     <!-- NODE THAT TAKES IN CMD_VEL AND PUBLISHES ODOM AND WHAT NOT -->
 
     <!-- TRANSFORMS -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="odom_to_base_link" args="0 0 0 0 0 0 mobile_base_controller base_link" />
+  
     <node pkg="tf2_ros" type="static_transform_publisher" name="aspirator_laser" args="0.1 0 0.08 0 pi pi base_link lidar_link 100" />
 
     <!-- NAVIGATION -->
