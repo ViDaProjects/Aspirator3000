@@ -31,8 +31,28 @@ roslaunch gazebo_aspirator aspirator_sim.launch
 
 ### Real robot
 
-All this will be changed to a single roslaunch when I get the chance
+All this will be changed to a single roslaunch when I get the chance.
+
+Mapping phase (for now)
+
+```sh
+roslaunch aspirator3000 mapping.launch
+```
+
+Nav phase (for now)
 
 ```sh
 roslaunch rplidar_ros rplidar_a1.launch
+```
+
+```sh
+roslaunch aspirator3000 nav.launch
+```
+
+#### Development phase important commands
+
+Saving the map (for now).
+
+```sh
+rosrun map_server map_saver -f ~/catkin_ws/src/aspirator3000/aspirator/maps/map
 ```

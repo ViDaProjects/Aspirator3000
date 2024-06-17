@@ -225,7 +225,7 @@
                 <updateRate>10.0</updateRate>
                 <robotNamespace>/</robotNamespace>
                 <frameName>lidar_link</frameName>
-                <topicName>/mobile_base/scan</topicName>
+                <topicName>/scan</topicName>
             </plugin>
         </sensor>
     </gazebo>
