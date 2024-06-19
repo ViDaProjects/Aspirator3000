@@ -1,6 +1,6 @@
 import time
 import numpy as np
-from gpiozero_extended import Motor
+from gpiozero_extended import Motor, PID
 
 class EncoderMotorController:
     #tsample = 0.01  # Sampling period for code execution (s) is needed?
@@ -18,22 +18,38 @@ class EncoderMotorController:
     max_angular_vel => Max motor velocity   
     """
 
-    def __init__(self, enable_pin, pwm1_pin, pwm2_pin, 
-                 encoder1_pin, encoder2_pin, encoder_ppr, wheel_radius):
-        self.enable_pin = enable_pin
+    tsample = 0.01
+    kpl = 7.5
+    kil = 0.3
+    kdl = 0.01
+    kpr = 7.5
+    kir = 0.3
+    kdr = 0.01
+    taupid = 0.05
+
+    def __init__(self, enable_pin_l, enable_pin_r, pwm1_pin_l, pwm2_pin_l, pwm1_pin_r, pwm2_pin_r, 
+                 encoder1_pin_l, encoder2_pin_l, encoder1_pin_r, encoder2_pin_r, encoder_ppr_l, encoder_ppr_r, wheel_radius):
         self.wheel_radius = wheel_radius
 
-        self.motor = Motor(enable1=enable_pin, pwm1=pwm1_pin, pwm2=pwm2_pin, 
-                           encoder1=encoder1_pin, encoder2=encoder2_pin, encoderppr=encoder_ppr)
+        self.motor_left = Motor(enable1=enable_pin_l, pwm1=pwm1_pin_l, pwm2=pwm2_pin_l, 
+                           encoder1=encoder1_pin_l, encoder2=encoder2_pin_l, encoderppr=encoder_ppr_l)
         
-        self.motor.reset_angle()
+        self.motor_left.reset_angle()
 
-        self.motor_speed_ratio = 0 
-        self.motor_direction = 1 
+        self.motor_right = Motor(enable1=enable_pin_r, pwm1=pwm1_pin_r, pwm2=pwm2_pin_r, 
+                                 encoder1=encoder1_pin_r, encoder2=encoder2_pin_r, encoderppr=encoder_ppr_r)
+        self.motor_right.reset_angle()
+
+        pid = PID(self.tsample, self.kpl, self.kil, self.kdl, umin=0, tau=self.taupid)
+        pid2 = PID(self.tsample, self.kpr, self.kir, self.kdr, umin=0, tau=self.taupid)
+
+        self.motor_output_left = 0
+        self.motor_output_right = 0
+
         self.is_stopped = False #Apagar?    
         self.time_previous = 0 #Apagar?
         self.time_current = 0 #Apagar?
-        self.time_start = 0 #time.perf_counter()
+        self.time_start = time.perf_counter()
         self.angular_vel_current = 0
         self.linear_vel_current = 0
         self.motor_angle_current = 0 #Theta
@@ -42,10 +58,12 @@ class EncoderMotorController:
 
     def stop_motor(self):
         self.is_stopped = True
-        self.motor.set_output(0, True)
-        self.motor.reset_angle()
-        self.motor_speed_ratio = 0
-        self.motor_direction = 1
+        self.motor_left.set_output(0, True)
+        self.motor_right.set_output(0, True)
+        self.motor_left.reset_angle()
+        self.motor_right.reset_angle()
+        self.motor_output_left = 0
+        self.motor_output_right = 0
 
     #def calculate_angular_vel(self):
 

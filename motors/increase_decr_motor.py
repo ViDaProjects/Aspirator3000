@@ -4,15 +4,15 @@ import numpy as np
 from gpiozero_extended import Motor, PID
 
 T = 2  # Period of sine wave (s)
-tstop = 5  # Sine wave duration (s)
-tsample = 0.05  # Sampling period for code execution (s)
+tstop = 2  # Sine wave duration (s)
+tsample = 0.01  # Sampling period for code execution (s)
 
-kp2 = 0.798
-ki2 = 0.0
-kd2 = 0.0
-kp1 = 8.3
-ki1 = 0.0
-kd1 = 0.0
+kp2 = 7.5
+ki2 = 0.3
+kd2 = 0.01
+kp1 = 7.5
+ki1 = 0.3
+kd1 = 0.01
 taupid = 0.05
 
 speed = 1
