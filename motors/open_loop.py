@@ -7,7 +7,7 @@ from gpiozero_extended import Motor
 
 # Creating time array for "continuous" signal
 tstop = 2  # Signal duration (s)
-tsample = 0.01  # Sampling period (s)
+tsample = 0.05  # Sampling period (s)
 u0 = 0.5  # Motor step input amplitude
 
 # First order filter parameters
@@ -17,8 +17,8 @@ tau = 0.1  # Response time (s)
 # (using SN754410 quadruple half-H driver chip)
 # Integrated encoder in on GPIO pins 24 and 25.
 mymotor = Motor(
-    enable1=16, pwm1=17, pwm2=27,
-    encoder1=24, encoder2=25, encoderppr=860.67)
+    enable1=23, pwm1=5, pwm2=6,
+    encoder1=26, encoder2=16, encoderppr=860.67)
 mymotor.reset_angle()
 
 # Pre-allocating output arrays

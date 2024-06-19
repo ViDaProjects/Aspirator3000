@@ -12,12 +12,15 @@ Author: Eduardo Nigro
 """
 
 #RODAR O OPEN LOOP E VER QUAL O K RECEBIDO
+#motor 2: 0.007662240539031143 => 0.077
+#motor 1: 7.4876076123795485
+
 #DEPOIS, RODAR SPEED_CONTROL E VER OQ ACONTECE
 #INTEGRAR O PID NO CODIGO PRONTO
 #INTEGRAR PID NA CLASSE:
 # - Ele ja recebe uma velocidade em rad/s e seta o output entre -1 e 1 
 
-
+#IMPLEMENTAR COM AS DUAS RODAS
 
 # Importing modules and classes
 import time
@@ -32,6 +35,8 @@ wsp = 20  # Motor speed set point (rad/s)
 tau = 0.1  # Speed low-pass filter response time (s)
 
 # Creating PID controller object
+#VALORES ALTERADOS NA TENTATIVA E ERRO -----------------------------
+
 kp = 0.15
 ki = 0.35
 kd = 0.01
@@ -42,8 +47,8 @@ pid = PID(tsample, kp, ki, kd, umin=0, tau=taupid)
 # (using SN754410 quadruple half-H driver chip)
 # Integrated encoder on GPIO pins 24 and 25.
 mymotor = Motor(
-    enable1=16, pwm1=17, pwm2=27,
-    encoder1=24, encoder2=25, encoderppr=860.67)
+    enable1=22, pwm1=17, pwm2=27,
+    encoder1=25, encoder2=24, encoderppr=860.67)
 mymotor.reset_angle()
 
 # Pre-allocating output arrays
@@ -94,6 +99,15 @@ print('Done.')
 # Stopping motor and releasing GPIO pins
 mymotor.set_output(0, brake=True)
 del mymotor
+
+print(t)
+print(" ")
+print(w)
+print(" ")
+print(wf)
+print(" ")
+print(u)
+
 
 # Plotting results
 plot_line(

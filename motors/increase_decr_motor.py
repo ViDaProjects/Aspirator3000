@@ -1,25 +1,39 @@
 # Importing modules and classes
 import time
 import numpy as np
-from gpiozero_extended import Motor
+from gpiozero_extended import Motor, PID
 
 T = 2  # Period of sine wave (s)
-tstop = False  # Sine wave duration (s)
-tsample = 1.5  # Sampling period for code execution (s)
+tstop = 5  # Sine wave duration (s)
+tsample = 0.05  # Sampling period for code execution (s)
 
-speed = 0
+kp2 = 0.798
+ki2 = 0.0
+kd2 = 0.0
+kp1 = 8.3
+ki1 = 0.0
+kd1 = 0.0
+taupid = 0.05
+
+speed = 1
 direction = 1 
 brake_st = False
 decrease = False
 
-# Creating motor object using GPIO pins 16, 17, and 18
-# (using SN754410 quadruple half-H driver chip)
-# Integrated encoder is on GPIO pins 25 and 25
-# GPIO pins 24 (Phase A - C1 at encoder) and 25 (Phase B - C2 at encoder)
+# Setting general parameters
+wsp = 5  # Motor speed set point (rad/s)
+tau = 0.1  # Speed low-pass filter response time (s)
+
 mymotor = Motor(
     enable1=22, pwm1=17, pwm2=27,
-    encoder1=24, encoder2=25, encoderppr=860.67)
+    encoder1=25, encoder2=24, encoderppr=860.67)
 mymotor.reset_angle()
+
+
+mymotor2 = Motor(
+    enable1=23, pwm1=5, pwm2=6,
+    encoder1=26, encoder2=16, encoderppr=860.67)
+mymotor2.reset_angle()
 
 #def controls
 def control_speed():
@@ -57,82 +71,120 @@ def control_direction():
     global direction
     direction = direction * (-1)
 
-def stop_motor():
-    global speed
-    global direction
-    global mymotor
-    global brake_st
-    speed = 0
-    direction = 1
-    mymotor.reset_angle()
-    #stop = True
-    brake_st = True
-
 # Pre-allocating output arrays
-t = []
-theta = []
+t1 = []
+w1 = []
+wf1 = []
+u1 = []
+t2 = []
+w2 = []
+wf2 = []
+u2 = []
+
+pid = PID(tsample, kp1, ki1, kd1, umin=0, tau=taupid)
+pid2 = PID(tsample, kp2, ki2, kd2, umin=0, tau=taupid)
 
 # Initializing current time step and starting clock
 tprev = 0
 tcurr = 0
 tstart = time.perf_counter()
-wcurr = 0
-wcurr_m = 0
-thetacurr = 0
-thetaprev = 0
+ucurr1 = 0  # x[n] (step input)
+wfprev1 = 0  # y[n-1]
+wfcurr1 = 0  # y[n]
+ucurr2 = 0  # x[n] (step input)
+wfprev2 = 0  # y[n-1]
+wfcurr2 = 0  # y[n]
+wcurr1 = 0
+wcurr2 = 0
+wcurr_m1 = 0
+wcurr_m2 = 0
+thetacurr1 = 0
+thetacurr2 = 0
+thetaprev1 = 0
+thetaprev2 = 0
 rm = 0.037 #wheels radius
 
 # Running motor sine wave output
 print('Running code for', tstop, 'seconds ...')
-while not tstop:
+while tcurr < tstop:
 
     # Pausing for `tsample` to give CPU time to process encoder signal
     time.sleep(tsample)
     # Getting current time (s)
     tcurr = time.perf_counter() - tstart
-    thetacurr = mymotor.get_angle()
-    wcurr = np.pi/180 * (thetacurr-thetaprev)/(tcurr-tprev) # pi/180 * degree -> degree to rad/s    
-    wcurr_m = wcurr * rm # velocity -> m/s
+    
+    thetacurr1 = mymotor.get_angle()
+    wcurr1 = np.pi/180 * (thetacurr1-thetaprev1)/(tcurr-tprev) # pi/180 * degree -> degree to rad/s    
+    wcurr_m1 = wcurr1 * rm # velocity -> m/s
+    wfcurr1 = tau/(tau+tsample)*wfprev1 + tsample/(tau+tsample)*wcurr1
+    wfprev1 = wfcurr1
+    ucurr1 = pid.control(wsp, wfcurr1)
+    t1.append(tcurr)
+    w1.append(wcurr1)
+    wf1.append(wfcurr1)
+    u1.append(ucurr1)
+
+
+    thetacurr2 = mymotor2.get_angle()
+    wcurr2 = np.pi/180 * (thetacurr2-thetaprev2)/(tcurr-tprev) # pi/180 * degree -> degree to rad/s    
+    wcurr_m2 = wcurr2 * rm # velocity -> m/s
+    wfcurr2 = tau/(tau+tsample)*wfprev2 + tsample/(tau+tsample)*wcurr2
+    wfprev2 = wfcurr2
+    ucurr2 = pid2.control(wsp, wfcurr2)
+    t2.append(tcurr)
+    w2.append(wcurr2)
+    wf2.append(wfcurr2)
+    u2.append(ucurr2)
 
     print("------------------------------------")
+    print("------------------------------------")
     print("PWM = ", mymotor.value)
-    print("Angle = ", thetacurr, " deg")
-    print("Speed - rad/s =", wcurr)
-    print("Speed - m/s =", wcurr_m)
+    print("Angle = ", thetacurr1, " deg")
+    print("Speed - rad/s =", wcurr1)
+    print("Speed - m/s =", wcurr_m1)
+    print(" ")
+    print("PWM = ", mymotor2.value)
+    print("Angle = ", thetacurr2, " deg")
+    print("Speed - rad/s =", wcurr2)
+    print("Speed - m/s =", wcurr_m2)
     print(" ")
 
-    # Updating output arrays
-    #t.append(tcurr)
-    #theta.append(mymotor.get_angle())
-    # Updating previous time value
 
     tprev = tcurr
-    thetaprev = thetacurr
-    #time.sleep(1.5)
+    thetaprev1 = thetacurr1
+    thetaprev2 = thetacurr2
 
-    if decrease:
+    mymotor.set_output(ucurr1)
+    mymotor2.set_output(ucurr2)
+    """if decrease:
         decrease_speed()
     else:
         control_speed()
     
     mymotor.set_output(speed * direction, brake = brake_st)
-
+    mymotor2.set_output(speed * direction, brake = brake_st)
+"""
     
 
 print('Done.')
 mymotor.set_output(0, brake=True)
+mymotor2.set_output(0, brake=True)
 del mymotor
+del mymotor2
 
-    
-"""Atributos:
-- velocidade angular/linear do motor
-- PDI
-- rpm?
-- PPR
-- raio da roda: 3,7cm - 0.037m
-- 1026 graus e 857 steps para uma volta da roda
-- 1042 graus e 871 steps
-- 75 voltas do encoder - 1029 e 860 steps
-- 3090 graus e 2582 em 3 voltas = 1030graus e 860.67 passos/volta  
-- diminuiu a v angular  
-"""
+print(t1)
+print(" ")
+print(w1)
+print(" ")
+print(wf1)
+print(" ")
+print(u1)
+print("--------------------------------------------")
+print("")
+print(t2)
+print(" ")
+print(w2)
+print(" ")
+print(wf2)
+print(" ")
+print(u2)    
