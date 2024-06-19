@@ -10,7 +10,7 @@
 
   <!-- Include Gazebo world launch file -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find p3dx_gazebo)/worlds/$(arg world).world" />
+    <arg name="world_name" value="world.world" />
     <arg name="debug" value="$(arg debug)" />
     <arg name="gui" value="$(arg gui)" />
     <arg name="paused" value="$(arg paused)" />
@@ -33,8 +33,6 @@
         respawn="false" output="screen" args="mobile_base_controller" />
 
   <!-- Static transform publisher -->
-  <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom" />
-  <node pkg="tf2_ros" type="static_transform_publisher" name="odom_to_base_link" args="0 0 0 0 0 0 mobile_base_controller base_link" />
   
 
   <!-- Robot state publisher -->

@@ -3,12 +3,15 @@
     <!-- NODE THAT TAKES IN CMD_VEL AND PUBLISHES ODOM AND WHAT NOT -->
 
     <!-- TRANSFORMS -->
-    <node pkg="tf" type="static_transform_publisher" name="aspirator_laser" args="0.1 0 0.08 0 pi pi base_link lidar_link 100" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="odom_to_base_link" args="0 0 0 0 0 0 mobile_base_controller base_link" />
+  
+    <node pkg="tf2_ros" type="static_transform_publisher" name="aspirator_laser" args="0.1 0 0.08 0 pi pi base_link lidar_link 100" />
 
     <!-- NAVIGATION -->
     <node pkg="gmapping" type="slam_gmapping" respawn="false" name="slam_gmapping" output="screen">
         <param name="map_update_interval" value="1.0"/>
-        <param name="maxUrange" value="10.0"/>
+        <param name="maxUrange" value="5.0"/>
         <param name="iterations" value="5"/><!--Quanto maior mais alinhado fica o mapa mas ele pesa mais-->
         <param name="linearUpdate" value="0.25"/>
         <param name="angularUpdate" value="0.262"/>
