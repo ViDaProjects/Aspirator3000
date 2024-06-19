@@ -1,20 +1,20 @@
-#!/usr/bin/env python
-
 import rospy
 import time
 import numpy as np
-from gpiozero_extended import Motor, PID
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist, Quaternion
+from encoder_motor_controller import EncoderMotorController 
 import tf
 
+rate = 0
 
 #função que inicializa as coisas da odometria
-def init_odometry():
+def init_odometry(tsample):
+    global rate
     # Inicialização do nó ROS
     rospy.init_node('motor_odometry_node')
-    odom_pub = rospy.Publisher('/odom', Odometry, queue_size=10)
-    odom_broadcaster = tf.TransformBroadcaster()
+    #odom_pub = rospy.Publisher('/odom', Odometry, queue_size=10)
+    #odom_broadcaster = tf.TransformBroadcaster()
     
     # Subscribe to the /cmd_vel topic
     rospy.Subscriber('/cmd_vel', Twist, cmd_vel_callback)
@@ -48,99 +48,33 @@ def cmd_vel_callback(msg):
     # You can add more complex logic here if necessary
 
 
-speed_goal_global = 5
+speed_goal_global = 0
 
+encoder_motor_controller = EncoderMotorController(enable_pin_l=22, enable_pin_r=23, pwm1_pin_l=17, pwm2_pin_l=27, pwm1_pin_r=5, pwm2_pin_r=6, encoder1_pin_l=25, encoder2_pin_l=24, encoder1_pin_r=26, encoder2_pin_r=16, encoder_ppr_l=860.67, encoder_ppr_r=860.67, wheel_radius=0.037)
 
-# ----------------------- APAGAR ---------------------------
-# Parâmetros do motor e PID
-T = 2  # Period of sine wave (s)
-tstop = 5  # Sine wave duration (s)
-tsample = 0.05  # Sampling period for code execution (s)
+init_odometry(encoder_motor_controller.get_sampling_period)
 
-kp2 = 0.02
-ki2 = 0.0
-kd2 = 0.0
-kp1 = 6.85
-ki1 = 0.0
-kd1 = 0.0
-taupid = 0.05
-
-# Setting general parameters
-#wsp = 5  # Motor speed set point (rad/s)
-tau = 0.1  # Speed low-pass filter response time (s)
-
-mymotor = Motor(
-    enable1=22, pwm1=17, pwm2=27,
-    encoder1=25, encoder2=24, encoderppr=860.67)
-mymotor.reset_angle()
-
-mymotor2 = Motor(
-    enable1=23, pwm1=5, pwm2=6,
-    encoder1=26, encoder2=16, encoderppr=860.67)
-mymotor2.reset_angle()
-
-pid1 = PID(tsample, kp1, ki1, kd1, umin=0, tau=taupid)
-pid2 = PID(tsample, kp2, ki2, kd2, umin=0, tau=taupid)
-
-# Initializing current time step and starting clock
-tprev = 0
-tcurr = 0
-tstart = time.perf_counter()
-ucurr1 = 0  # x[n] (step input)
-wfprev1 = 0  # y[n-1]
-wfcurr1 = 0  # y[n]
-ucurr2 = 0  # x[n] (step input)
-wfprev2 = 0  # y[n-1]
-wfcurr2 = 0  # y[n]
-wcurr1 = 0
-wcurr2 = 0
-wcurr_m1 = 0
-wcurr_m2 = 0
-thetacurr1 = 0
-thetacurr2 = 0
-thetaprev1 = 0
-thetaprev2 = 0
-rm = 0.037 #wheels radius
-
-
-
-#calculo do x e y para odometria
-x1 = 0.0
-y1 = 0.0
-theta1 = 0.0
-
-x2 = 0.0
-y2 = 0.0
-theta2 = 0.0
-
-while not rospy.is_shutdown() and tcurr < tstop:
+while not rospy.is_shutdown():
     # Pausing for `tsample` to give CPU time to process encoder signal
     #time.sleep(tsample)
     # Getting current time (s)
     
     #set speed goal class by wsp global
+    current_time = encoder_motor_controller.get_current_time()
 
-    tcurr = time.perf_counter() - tstart
-    current_time = rospy.Time.now()
+    encoder_motor_controller.set_speed_goal(speed_goal_global)
 
-    thetacurr1 = mymotor.get_angle()
-    thetacurr2 = mymotor2.get_angle()
-
-    # Calculating speeds for both motors
-    wcurr1 = np.pi / 180 * (thetacurr1 - thetaprev1) / (tcurr - tprev)  # rad/s    
-    wcurr2 = np.pi / 180 * (thetacurr2 - thetaprev2) / (tcurr - tprev)  # rad/s
-
-    # Calculate filtered speeds
-    wfcurr1 = tau / (tau + tsample) * wfprev1 + tsample / (tau + tsample) * wcurr1
-    wfcurr2 = tau / (tau + tsample) * wfprev2 + tsample / (tau + tsample) * wcurr2
-    
+    encoder_motor_controller.calculate_speeds()
 
     # Control signals
-    ucurr1 = pid1.control(wsp, wfcurr1)
-    ucurr2 = pid2.control(wsp, wfcurr2)
+    encoder_motor_controller.calculate_pwm_output()
+
+    encoder_motor_controller.update_previous_values()
+
+    rate.sleep()
 
     # Odometry calculation
-    dt = tcurr - tprev
+"""    dt = tcurr - tprev
     delta_x1 = wfcurr1 * dt * np.cos(theta1)
     delta_y1 = wfcurr1 * dt * np.sin(theta1)
     delta_theta1 = wfcurr1 * dt
@@ -194,23 +128,9 @@ while not rospy.is_shutdown() and tcurr < tstop:
     print("Motor 2 - Speed - rad/s =", wcurr2)
     print("Motor 2 - Speed - m/s =", wcurr_m2)
     print(" ")
+"""
 
-    # Update previous values
-    tprev = tcurr
-    thetaprev1 = thetacurr1
-    thetaprev2 = thetacurr2
-    wfprev1 = wfcurr1
-    wfprev2 = wfcurr2
-
-
-    # Set motor outputs
-    mymotor.set_output(ucurr1)
-    mymotor2.set_output(ucurr2)
-
-    rate.sleep()
 
 # Parando os motores
-mymotor.set_output(0, brake=True)
-mymotor2.set_output(0, brake=True)
-del mymotor
-del mymotor2
+encoder_motor_controller.stop_motor()
+encoder_motor_controller.delete_motor()

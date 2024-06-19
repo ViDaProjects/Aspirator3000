@@ -50,13 +50,13 @@ class EncoderMotorController:
         self.motor_output_left = 0
         self.motor_output_right = 0
 
-        self_theta_curr_left = 0
+        self.theta_curr_left = 0
         self.theta_curr_right = 0
         self.theta_prev_left = 0 
         self.theta_prev_right = 0
 
         #Time
-        self.start_time = time.perf_counter()
+        self.start_timer()
         self.current_time = 0
         self.prev_time = 0
         
@@ -64,6 +64,8 @@ class EncoderMotorController:
         self.speed_goal = 0
         self.filt_speed_ang_curr_left = 0
         self.filt_speed_ang_curr_right = 0
+        self.filt_speed_ang_prev_left = 0
+        self.filt_speed_ang_prev_right = 0
         self.speed_ang_curr_left = 0
         self.speed_ang_curr_right = 0
 
@@ -88,24 +90,25 @@ class EncoderMotorController:
     def set_speed_goal(self, speed):
         self.speed_goal = speed
 
-    def set_current_time(self):
-        self.current_time = time.perf_counter() - self.start_time
-
     def calculate_pwm_output(self):
         self.motor_output_left = self.pid1.control(self.speed_goal, self.filt_speed_ang_curr_left)
         self.motor_output_right = self.pid2.control(self.speed_goal, self.filt_speed_ang_curr_right)
 
-
     #calculate speeds and filtered speeds -> chama isso dentro do pwm output?
     def calculate_speeds(self):
-        self.speed_ang_curr_left = np.pi / 180 * (self_theta_curr_left - self.theta_prev_left) / (self.current_time - self.prev_time)  # rad/s    
-        self.speed_ang_curr_right = np.pi / 180 * (self_theta_curr_right - self.theta_prev_right) / (self.current_time - self.prev_time)
+        self.theta_curr_left = self.motor_left.get_angle()
+        self.theta_curr_right = self.motor_right.get_angle()
+
+        self.speed_ang_curr_left = np.pi / 180 * (self.theta_curr_left - self.theta_prev_left) / (self.current_time - self.prev_time)  # rad/s    
+        self.speed_ang_curr_right = np.pi / 180 * (self.theta_curr_right - self.theta_prev_right) / (self.current_time - self.prev_time)
 
         # Calculate filtered speeds
         self.filt_speed_ang_curr_left = self.tau / (self.tau + self.sampling_period) * self.filt_speed_ang_curr_left + self.sampling_period / (self.tau + self.sampling_period) * self.speed_ang_curr_left
-        wfprev1 = wfcurr1
-        wfcurr2 = tau / (tau + tsample) * wfprev2 + tsample / (tau + tsample) * wcurr2
-        wfprev2 = wfcurr2
+        self.filt_speed_ang_curr_right = self.tau / (self.tau + self.sampling_period) * self.filt_speed_ang_curr_right + self.sampling_period / (self.tau + self.sampling_period) * self.speed_ang_curr_right
+        
+    def get_sampling_period(self):
+        return self.sampling_period()
+
     #Calculate odometry message
 
     #Create odometry message
@@ -114,18 +117,18 @@ class EncoderMotorController:
 
     #Broadcast transforms (o que é???)
 
-    #update previous values
+    def update_previous_values(self):
+        self.filt_speed_ang_prev_left = self.filt_speed_ang_curr_left
+        self.filt_speed_ang_prev_right = self.filt_speed_ang_curr_right
+        self.prev_time = self.current_time
+        self.theta_prev_left = self.theta_curr_left
+        self.theta_prev_right = self.theta_curr_right
 
-    #Set motor outputs
-
-    #del_motors
-    
     def get_current_time(self):
+        self.time_current = time.perf_counter() - self.time_start
         return self.time_current    
 
-    def set_current_time(self):
-        self.time_current = time.perf_counter() - self.time_start
-    
+
     def start_timer(self):
         self.start_timer = time.perf_counter()
 
@@ -134,16 +137,9 @@ class EncoderMotorController:
         self.time_current = 0
         self.time_previous = 0
 
-    def set_clockwise_dir(self):
-        self.motor_direction = 1
-
-    def set_anticlockwise_dir(self):
-        self.motor_direction = -1
-
     def delete_motor(self): 
-        del motor
+        del self.motor_left
+        del self.motor_right
 
 
-    #PID calculus    
 
-    #Ver o CMD vel -> como que vou receber e lidar com esses dados?
