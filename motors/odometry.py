@@ -123,9 +123,8 @@ while not rospy.is_shutdown() and tcurr < tstop:
 
     # Calculate filtered speeds
     wfcurr1 = tau / (tau + tsample) * wfprev1 + tsample / (tau + tsample) * wcurr1
-    wfprev1 = wfcurr1
     wfcurr2 = tau / (tau + tsample) * wfprev2 + tsample / (tau + tsample) * wcurr2
-    wfprev2 = wfcurr2
+    
 
     # Control signals
     ucurr1 = pid1.control(wsp, wfcurr1)
@@ -191,6 +190,9 @@ while not rospy.is_shutdown() and tcurr < tstop:
     tprev = tcurr
     thetaprev1 = thetacurr1
     thetaprev2 = thetacurr2
+    wfprev1 = wfcurr1
+    wfprev2 = wfcurr2
+
 
     # Set motor outputs
     mymotor.set_output(ucurr1)
