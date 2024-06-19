@@ -2,6 +2,8 @@
 
     <node pkg="tf2_ros" type="static_transform_publisher" name="aspirator_laser" args="0.1 0 0.08 0 pi pi base_link lidar_link 100" />
 
+    <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom" />
+
     <node name="map_server" pkg="map_server" type="map_server" args="$(find aspirator3000)/maps/map.yaml" output="screen" />
 
 
@@ -51,18 +53,13 @@
 
     </node>
 
-    <node pkg="move_base" type="move_base" name="move_base" output="screen">
-        <!-- Common costmap parameters -->
-        <rosparam file="$(find aspirator_nav)/costmap_common_param.yaml" command="load" ns="global_costmap" />
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <rosparam file="$(find aspirator_nav)/costmap_common_param.yaml" command="load" ns="global_costmap" /> 
         <rosparam file="$(find aspirator_nav)/costmap_common_param.yaml" command="load" ns="local_costmap" />
-    
-        <!-- Global costmap parameters -->
-        <rosparam file="$(find aspirator_nav)/global_costmap_param.yaml" command="load" ns="global_costmap" />
-    
-        <!-- Local costmap parameters -->
-        <rosparam file="$(find aspirator_nav)/local_costmap_param.yaml" command="load" ns="local_costmap" />
-    
-        <!-- Base local planner parameters -->
+        <rosparam file="$(find aspirator_nav)/local_costmap_param.yaml" command="load" />
+        <rosparam file="$(find aspirator_nav)/global_costmap_param.yaml" command="load" /> 
         <rosparam file="$(find aspirator_nav)/base_local_planner_param.yaml" command="load" />
     </node>
+
+
 </launch>
