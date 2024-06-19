@@ -1,0 +1,32 @@
+* encoder_motor_controller: 
+Seria a classe arrumada com as funções necessárias, tá meio desatualizada, 
+pq ia ver oq realmente precisaria na odometria pra colocar aí
+Mas a ideia era usar essa classe.
+
+* Encoder.py: ignora
+
+* gpiozero_extended: É um modulo pronto, chamo funções daí 
+Ele depende da biblioteca gpio_zero extended que foi um saco pra instalar. Acabei de perceber que n anotei como eu fiz
+
+https://gpiozero.readthedocs.io/en/stable/installing.html 
+
+A biblioteca é essa aí, tem uma documentação boa 
+O problema que eu tive é que instalava a biblioteca, mas dizia que não tinha como importar o RotaryEncoder, porque não tinha no modulo
+E realmente n tinha
+N consegui instalar de uma forma normal, entao apenas clonei o repositorio da biblioteca na parte de modulos do python 
+
+https://github.com/gpiozero/gpiozero/tree/a13848bd9701844c139709750cfa038c59b2ab5f
+
+Se precisar, tenta instalar normal, se der erro, faz como eu fiz
+
+* increase_decrease_motor: 
+É o arquivo que tô usando atualmente pra testar os parâmetros do PID etc, ele tem a configuração dos dois motores
+
+* motor_connections:
+Explica as conexões dos motores e tem a inicialização de cada um deles
+
+* open_loop: Código pra encontrar o k
+
+* plot: plotar meus testes aqui, ignora -> depende do utils.py
+
+* speed_control: ignora
