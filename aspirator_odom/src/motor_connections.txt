@@ -1,0 +1,34 @@
+
+#vermelho (GND) - branco (VCC) - Motor
+#enable 22
+#azul (17)(pwm1)(esquerda) - roxo (27)(pwm2)(direita)
+#encoder1 = c2 e encoder2 = c1 
+#c1 - amarelo (24)
+#c2 - verde (25)
+#pwm +
+#sentido horário -ang positivo 
+#pwm - 
+#sentido anti horario - ang neg
+
+
+
+outro motor
+enable - 23
+c1 - 16 (encoder2)
+c2 - 26 (encoder1)
+pwm1- gnd - marrom - 5
+pwm2 - vcc - branco - 6
+
+
+//Esquerdo (branco - vermelho)
+mymotor = Motor(
+    enable1=22, pwm1=17, pwm2=27,
+    encoder1=25, encoder2=24, encoderppr=860.67)
+mymotor.reset_angle()
+
+
+//Direito (vermelho - branco)
+mymotor2 = Motor(
+    enable1=23, pwm1=5, pwm2=6,
+    encoder1=26, encoder2=16, encoderppr=860.67)
+mymotor2.reset_angle()

@@ -1,0 +1,4 @@
+In referring to the robot let's define two coordinate frames: 
+1 - Corresponding to the center point of the base of the robot (base_link) - rotational center of the robot
+
+2 - Corresponding to the center point of the laser that is mounted on top of the base (base). 
