@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/nicolas/catkin_ws/simple_navigation_goals/build/devel/setup.sh

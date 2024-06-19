@@ -50,4 +50,19 @@
         <param name="base_frame_id"             value="base_link"/>
 
     </node>
+
+    <node pkg="move_base" type="move_base" name="move_base" output="screen">
+        <!-- Common costmap parameters -->
+        <rosparam file="$(find aspirator_nav)/costmap_common_param.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find aspirator_nav)/costmap_common_param.yaml" command="load" ns="local_costmap" />
+    
+        <!-- Global costmap parameters -->
+        <rosparam file="$(find aspirator_nav)/global_costmap_param.yaml" command="load" ns="global_costmap" />
+    
+        <!-- Local costmap parameters -->
+        <rosparam file="$(find aspirator_nav)/local_costmap_param.yaml" command="load" ns="local_costmap" />
+    
+        <!-- Base local planner parameters -->
+        <rosparam file="$(find aspirator_nav)/base_local_planner_param.yaml" command="load" />
+    </node>
 </launch>
