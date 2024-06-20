@@ -550,6 +550,11 @@ class EncoderMotorController:
         self.theta_curr_left = self.motor_left.get_angle()
         self.theta_curr_right = self.motor_right.get_angle()
 
+        rospy.loginfo("time data:")
+        rospy.loginfo(self.current_time)
+        rospy.loginfo(self.prev_time)
+        rospy.loginfo(self.current_time - self.prev_time)
+
         if self.current_time - self.prev_time == 0: 
             self.speed_ang_curr_left = 0
             self.speed_ang_curr_right = 0
@@ -638,6 +643,7 @@ def create_odom_msg(x, y, theta, vx, vy, vth, current_time):
 
 # Callback function for /cmd_vel
 def cmd_vel_callback(msg):
+    rospy.loginfo(msg.linear.x)
     global speed_goal_global
     speed_goal_global = msg.angular.z
     # Adjust the motor speeds based on the received velocity commands
