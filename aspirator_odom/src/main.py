@@ -507,9 +507,9 @@ class EncoderMotorController:
         self.theta_prev_right = 0
 
         #Time
-        self.start_timer()
-        self.current_time = 0
-        self.prev_time = 0
+        self.time_start = time.perf_counter()
+        self.current_time = time.perf_counter()
+        self.prev_time = 0.01
         
         #Velocities
         self.speed_goal = 0
@@ -550,8 +550,13 @@ class EncoderMotorController:
         self.theta_curr_left = self.motor_left.get_angle()
         self.theta_curr_right = self.motor_right.get_angle()
 
-        self.speed_ang_curr_left = np.pi / 180 * (self.theta_curr_left - self.theta_prev_left) / (self.current_time - self.prev_time)  # rad/s    
-        self.speed_ang_curr_right = np.pi / 180 * (self.theta_curr_right - self.theta_prev_right) / (self.current_time - self.prev_time)
+        if self.current_time - self.prev_time == 0: 
+            self.speed_ang_curr_left = 0
+            self.speed_ang_curr_right = 0
+
+        else: 
+            self.speed_ang_curr_left = np.pi / 180 * (self.theta_curr_left - self.theta_prev_left) / (self.current_time - self.prev_time)  # rad/s    
+            self.speed_ang_curr_right = np.pi / 180 * (self.theta_curr_right - self.theta_prev_right) / (self.current_time - self.prev_time)
 
         # Calculate filtered speeds
         self.filt_speed_ang_curr_left = self.tau / (self.tau + self.sampling_period) * self.filt_speed_ang_curr_left + self.sampling_period / (self.tau + self.sampling_period) * self.speed_ang_curr_left
@@ -609,7 +614,7 @@ def init_odometry(tsample):
     
     # Subscribe to the /cmd_vel topic
     rospy.Subscriber('/cmd_vel', Twist, cmd_vel_callback)
-    rate = rospy.Rate(1 / tsample)
+    rate = rospy.Rate(20)
 
 # Função para criar a mensagem de odometria
 def create_odom_msg(x, y, theta, vx, vy, vth, current_time):
