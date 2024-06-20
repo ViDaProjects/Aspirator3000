@@ -550,11 +550,6 @@ class EncoderMotorController:
         self.theta_curr_left = self.motor_left.get_angle()
         self.theta_curr_right = self.motor_right.get_angle()
 
-        rospy.loginfo("time data:")
-        rospy.loginfo(self.current_time)
-        rospy.loginfo(self.prev_time)
-        rospy.loginfo(self.current_time - self.prev_time)
-
         if self.current_time - self.prev_time == 0: 
             self.speed_ang_curr_left = 0
             self.speed_ang_curr_right = 0
@@ -586,6 +581,7 @@ class EncoderMotorController:
         self.theta_prev_right = self.theta_curr_right
 
     def get_current_time(self):
+        rospy.loginfo(time.perf_counter())
         self.time_current = time.perf_counter() - self.time_start
         return self.time_current    
 
