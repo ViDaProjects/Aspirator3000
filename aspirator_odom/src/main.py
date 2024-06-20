@@ -549,7 +549,7 @@ class EncoderMotorController:
     def calculate_speeds(self):
         self.theta_curr_left = self.motor_left.get_angle()
         self.theta_curr_right = self.motor_right.get_angle()
-        rospy.loginfo(self.current_time - self.prev_time)
+
         if self.current_time - self.prev_time == 0: 
             self.speed_ang_curr_left = 0
             self.speed_ang_curr_right = 0
@@ -558,10 +558,14 @@ class EncoderMotorController:
             self.speed_ang_curr_left = np.pi / 180 * (self.theta_curr_left - self.theta_prev_left) / (self.current_time - self.prev_time)  # rad/s    
             self.speed_ang_curr_right = np.pi / 180 * (self.theta_curr_right - self.theta_prev_right) / (self.current_time - self.prev_time)
 
+        rospy.loginfo(self.speed_ang_curr_left)
+
         # Calculate filtered speeds
         self.filt_speed_ang_curr_left = self.tau / (self.tau + self.sampling_period) * self.filt_speed_ang_curr_left + self.sampling_period / (self.tau + self.sampling_period) * self.speed_ang_curr_left
         self.filt_speed_ang_curr_right = self.tau / (self.tau + self.sampling_period) * self.filt_speed_ang_curr_right + self.sampling_period / (self.tau + self.sampling_period) * self.speed_ang_curr_right
         
+        rospy.loginfo("filtered" + self.filt_speed_ang_curr_left)
+
     def get_sampling_period(self):
         return self.sampling_period()
 
