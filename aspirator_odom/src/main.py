@@ -581,7 +581,7 @@ class EncoderMotorController:
         self.theta_prev_right = self.theta_curr_right
 
     def get_current_time(self):
-        rospy.loginfo(time.perf_counter())
+        rospy.loginfo(time.perf_counter() - self.time_start)
         self.time_current = time.perf_counter() - self.time_start
         return self.time_current    
 
