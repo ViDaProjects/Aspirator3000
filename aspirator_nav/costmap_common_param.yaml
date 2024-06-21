@@ -1,6 +1,6 @@
-robot_base_frame: base_link
-transform_tolerance: 1.0
-robot_radius: 0.155
+obstacle_range: 3.0
+raytrace_range: 3.5
+
 footprint: [ # Base link is the point between the wheels
   [0.18, -0.11],  # Front-left
   [0.18, 0.11],   # Front-right
@@ -8,19 +8,10 @@ footprint: [ # Base link is the point between the wheels
   [-0.04, -0.11]  # Back-left
 ]
 
-inflater:
-  robot_radius: 0.155
-  inflation_radius: 0.155
+inflation_radius: 1.0
+cost_scaling_factor: 3.0
 
-observation_sources: laser_scan_sensor
+map_type: costmap
+observation_sources: scan
+scan: {sensor_frame: lidar_link, data_type: LaserScan, topic: scan, marking: true, clearing: true}
 
-laser_scan_sensor:
-  sensor_frame: base_link
-  data_type: LaserScan
-  topic: scan
-  marking: true
-  clearing: true
-  min_obstacle_height: 0.01
-  max_obstacle_height: 2.0
-
-# Global costmap parameters

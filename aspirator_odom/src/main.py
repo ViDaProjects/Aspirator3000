@@ -563,8 +563,7 @@ class EncoderMotorController:
         # Calculate filtered speeds
         self.filt_speed_ang_curr_left = self.tau / (self.tau + self.sampling_period) * self.filt_speed_ang_curr_left + self.sampling_period / (self.tau + self.sampling_period) * self.speed_ang_curr_left
         self.filt_speed_ang_curr_right = self.tau / (self.tau + self.sampling_period) * self.filt_speed_ang_curr_right + self.sampling_period / (self.tau + self.sampling_period) * self.speed_ang_curr_right
-        
-        rospy.loginfo("filtered" + str(self.filt_speed_ang_curr_left))
+
 
     def get_sampling_period(self):
         return self.sampling_period()

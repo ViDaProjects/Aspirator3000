@@ -18,8 +18,8 @@ decrease = False
 # Integrated encoder is on GPIO pins 25 and 25
 # GPIO pins 24 (Phase A - C1 at encoder) and 25 (Phase B - C2 at encoder)
 mymotor = Motor(
-    enable1=23, pwm1=5, pwm2=6,
-    encoder1=26, encoder2=16, encoderppr=860.67)
+    enable1=22, pwm1=17, pwm2=27,
+    encoder1=24, encoder2=25, encoderppr=860.67)
 mymotor.reset_angle()
 
 # Pre-allocating output arrays
@@ -49,11 +49,12 @@ while not tstop:
     thetacurr = mymotor.get_angle()
     wcurr = np.pi/180 * (thetacurr-thetaprev)/(tcurr-tprev) # pi/180 * degree -> degree to rad/s    
     wcurr_m = wcurr * rm
+    mymotor.set_output(speed * direction, brake = brake_st)
     print("Output =", mymotor.value)
     print("Angle = {:0.0f} deg".format(thetacurr))
     print("Speed - rad/s =", wcurr)
     print("Speed - m/s =", wcurr_m)
-    mymotor.set_output(speed * direction, brake = brake_st)
+    
     # Updating output arrays
     #t.append(tcurr)
     #theta.append(mymotor.get_angle())
