@@ -20,6 +20,8 @@ pwm1- gnd - marrom - 5
 pwm2 - vcc - branco - 6
 
 
+// Rever conexões
+
 //Esquerdo (branco - vermelho)
 mymotor = Motor(
     enable1=22, pwm1=17, pwm2=27,

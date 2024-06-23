@@ -56,7 +56,7 @@ class EncoderMotorController:
         self.theta_prev_right = 0
 
         #Time
-        self.start_timer()
+        self.time_start = time.perf_counter()
         self.current_time = 0
         self.prev_time = 0
         
@@ -81,11 +81,11 @@ class EncoderMotorController:
         self.motor_output_left = 0
         self.motor_output_right = 0
 
-    def calculate_linear_vel(self):
-        self.linear_vel_current = self.angular_vel_current * self.wheel_radius
+    #def calculate_linear_vel(self):
+    #    self.linear_vel_current = self.angular_vel_current * self.wheel_radius
 
-    def get_linear_vel(self):
-        return self.linear_vel_current
+    #def get_linear_vel(self):
+    #    return self.linear_vel_current
 
     def set_speed_goal(self, speed):
         self.speed_goal = speed
@@ -96,6 +96,8 @@ class EncoderMotorController:
 
     #calculate speeds and filtered speeds -> chama isso dentro do pwm output?
     def calculate_speeds(self):
+        self.set_current_time()
+
         self.theta_curr_left = self.motor_left.get_angle()
         self.theta_curr_right = self.motor_right.get_angle()
 
@@ -124,14 +126,14 @@ class EncoderMotorController:
         self.theta_prev_left = self.theta_curr_left
         self.theta_prev_right = self.theta_curr_right
 
-    def get_current_time(self):
+    def set_current_time(self):
         self.time_current = time.perf_counter() - self.time_start
-        return self.time_current    
 
-
+    #apagar
     def start_timer(self):
         self.start_timer = time.perf_counter()
 
+    #apagar
     def reset_timer(self):
         self.time_start = 0
         self.time_current = 0
